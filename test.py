@@ -75,7 +75,6 @@ def test_on() -> None:
 
 def test_on_extended_syntax() -> None:
     a = h.div("#div1", hx.on(js="load -> this.showModal()"))
-    # a = h.div("#div1", hx_on="load -> this.showModal()")
     assert str(a) == '<div id="div1" hx-on="load -> this.showModal()"></div>'
 
 
@@ -105,6 +104,7 @@ def test_include() -> None:
     a = h.div("#div1", hx.include("[name='email']"))
     assert str(a) == '<div id="div1" hx-include="[name=&#39;email&#39;]"></div>'
 
+
 def test_swap_oob() -> None:
     a = h.div("#div1", hx.swap_oob(True))
     assert str(a) == '<div id="div1" hx-swap-oob="true"></div>'
@@ -127,12 +127,18 @@ def test_replace_url() -> None:
 
 def test_headers() -> None:
     a = h.div("#div1", hx.headers({"my-custom-header": "my custom value"}))
-    assert str(a) == '<div id="div1" hx-headers="{&#34;my-custom-header&#34;: &#34;my custom value&#34;}"></div>'
+    assert (
+        str(a)
+        == '<div id="div1" hx-headers="{&#34;my-custom-header&#34;: &#34;my custom value&#34;}"></div>'
+    )
 
 
 def test_headers_js() -> None:
     a = h.div("#div1", hx.headers({"my-custom-header": "my custom value"}, js=True))
-    assert str(a) == '<div id="div1" hx-headers="js:{&#34;my-custom-header&#34;: &#34;my custom value&#34;}"></div>'
+    assert (
+        str(a)
+        == '<div id="div1" hx-headers="js:{&#34;my-custom-header&#34;: &#34;my custom value&#34;}"></div>'
+    )
 
 
 def test_encoding() -> None:
@@ -148,6 +154,14 @@ def test_indicator() -> None:
 def test_boost() -> None:
     a = h.div("#div1", hx.boost(True))
     assert str(a) == '<div id="div1" hx-boost="true"></div>'
+
+
+def test_boost_long_form() -> None:
+    a = h.div("#div1", hx.boost(swap="outerSync", select="#main", target="#main"))
+    assert (
+        str(a)
+        == '<div id="div1" hx-boost="swap:outerSync target:#main select:#main"></div>'
+    )
 
 
 def test_sync() -> None:
@@ -211,7 +225,7 @@ def test_method() -> None:
 
 
 def test_config() -> None:
-    a = h.div("#div1", hx.config({"validate": True}))
+    a = h.div("#div1", hx.config(validate=True))
     assert str(a) == '<div id="div1" hx-config="{&#34;validate&#34;: true}"></div>'
 
 
