@@ -11,6 +11,27 @@ _selector: TypeAlias = (
     str | Literal["this", "next", "previous", "body", "document", "window", "host"]
 )
 
+_event: TypeAlias = (
+    str
+    | Literal[
+        "load",
+        "revealed",
+        "intersect",
+        "submit",
+        "change",
+        "input",
+        "focus",
+        "blur",
+        "click",
+        "dblclick",
+        "mousedown",
+        "mouseup",
+        "mousemove",
+        "mouseenter",
+        "mouseleave",
+    ]
+)
+
 
 class SafeString(str):
     def __html__(self) -> SafeString:
@@ -60,7 +81,7 @@ def delete(url: str, *, inherited: bool = False) -> dict[str, str]:
     return {f"hx-delete{':inherited' if inherited else ''}": url}
 
 
-def trigger(*event: str, inherited: bool = False) -> dict[str, str]:
+def trigger(*event: _event, inherited: bool = False) -> dict[str, str]:
     """Controls when element issues requests.
 
     https://four.htmx.org/reference/attributes/hx-trigger
@@ -173,8 +194,39 @@ def select(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     return {f"hx-select{':inherited' if inherited else ''}": selector}
 
 
+_htmx_events: TypeAlias = Literal[
+    "htmx:config:request",
+    "htmx:before:request",
+    "htmx:after:request",
+    "htmx:finally:request",
+    "htmx:before:swap",
+    "htmx:after:swap",
+    "htmx:finally:swap",
+    "htmx:before:cleanup",
+    "htmx:after:cleanup",
+    "htmx:confirm",
+    "htmx:error",
+    "htmx:abort",
+    "htmx:before:init",
+    "htmx:after:init",
+    "htmx:before:process",
+    "htmx:after:process",
+    "htmx:before:history:update",
+    "htmx:after:history:update",
+    "htmx:after:history:push",
+    "htmx:after:history:replace",
+    "htmx:before:history:restore",
+    "htmx:before:viewTransition",
+    "htmx:after:viewTransition",
+    "htmx:before:response",
+    "htmx:before:settle",
+    "htmx:after:settle",
+    "htmx:response:error",
+]
+
+
 @overload
-def on(event: str, js: str, *, inherited: bool = False) -> dict[str, str]:
+def on(event: _event | _htmx_events, js: str, *, inherited: bool = False) -> dict[str, str]:
     pass
 
 
@@ -183,7 +235,9 @@ def on(*, js: str, inherited: bool = False) -> dict[str, str]:
     pass
 
 
-def on(event: str = "", js: str = "", *, inherited: bool = False) -> dict[str, str]:
+def on(
+    event: _event | _htmx_events = "", js: str = "", *, inherited: bool = False
+) -> dict[str, str]:
     """Runs inline JavaScript when event fires.
 
     https://four.htmx.org/reference/attributes/hx-on
