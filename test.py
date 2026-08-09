@@ -90,13 +90,13 @@ def test_vals_js() -> None:
     a = h.div(
         "#div1",
         hx.vals(
-            {"name": "test", "value": [1, 2, 3], "some_js_value": "getSomeData()"},
+            {"name": "test", "value": [1, 2, 3], "some_js_value": hx.JS("getSomeData()")},
             js=True,
         ),
     )
     assert (
         str(a)
-        == '<div id="div1" hx-vals="js:{&#34;name&#34;: &#34;test&#34;, &#34;value&#34;: [1, 2, 3], &#34;some_js_value&#34;: &#34;getSomeData()&#34;}"></div>'
+        == '<div id="div1" hx-vals="js:{&#34;name&#34;: &#34;test&#34;, &#34;value&#34;: [1, 2, 3], &#34;some_js_value&#34;: getSomeData()}"></div>'
     )
 
 
@@ -134,10 +134,10 @@ def test_headers() -> None:
 
 
 def test_headers_js() -> None:
-    a = h.div("#div1", hx.headers({"my-custom-header": "my custom value"}, js=True))
+    a = h.div("#div1", hx.headers({"my-custom-header": hx.JS("getSomeData()")}, js=True))
     assert (
         str(a)
-        == '<div id="div1" hx-headers="js:{&#34;my-custom-header&#34;: &#34;my custom value&#34;}"></div>'
+        == '<div id="div1" hx-headers="js:{&#34;my-custom-header&#34;: getSomeData()}"></div>'
     )
 
 

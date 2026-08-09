@@ -195,14 +195,36 @@ def on(event: str = "", js: str = "") -> dict[str, str]:
     return {f"hx-on{':' + event if event else ''}": SafeString(js)}
 
 
-# todo: figure out how to handle js attributes in data.
-#  Currently they have "" around them that needs to be removed somehow
+class JS:
+    """Used to mark strings as js expressions for use in hx-vals and hx-headers."""
+    start = 'HXJS-start:'
+    end = ':HXJS-end'
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def __str__(self) -> str:
+        return f"{JS.start}{self.value}{JS.end}"
+
+
+class _HTMXJSONEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if isinstance(o, JS):
+            return str(o)
+            # Let the base class default method raise the TypeError
+        return super().default(o)
+
+    def encode(self, o: Any) -> str:
+        string: str = super().encode(o)
+        string = string.replace(f'"{JS.start}',  "").replace(f'{JS.end}"', "")
+        return string
+
+
 def vals(data: dict[str, Any], js: bool = False, append: bool = False) -> dict[str, str]:
     """Adds values to request parameters.
 
     https://four.htmx.org/reference/attributes/hx-vals
     """
-    data_string = json.dumps(data)
+    data_string = json.dumps(data, cls=_HTMXJSONEncoder)
     return {f"hx-vals{':append' if append else ''}": f"{'js:' if js else ''}{data_string}"}
 
 
@@ -250,13 +272,12 @@ def replace_url(replace: bool = True) -> dict[str, str]:
     return {"hx-replace-url": str(replace).lower()}
 
 
-# todo: as for vals, we need to handle js attributes properly
 def headers(data: dict[str, Any], js: bool = False) -> dict[str, str]:
     """Adds custom headers to request.
 
     https://four.htmx.org/reference/attributes/hx-headers
     """
-    return {"hx-headers": f"{'js:' if js else ''}{json.dumps(data)}"}
+    return {"hx-headers": f"{'js:' if js else ''}{json.dumps(data, cls=_HTMXJSONEncoder)}"}
 
 
 def encoding(
