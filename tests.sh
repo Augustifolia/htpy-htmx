@@ -4,3 +4,5 @@ for version in 3.10 3.11 3.12 3.13 3.14; do
     uv run --python $version pytest test.py
     uv run --python $version mypy .
 done
+
+black --check .

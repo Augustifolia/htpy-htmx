@@ -177,7 +177,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "htpy", specifier = ">=26.5.1" }]
+requires-dist = [{ name = "htpy" }]
 
 [package.metadata.requires-dev]
 dev = [
