@@ -11,8 +11,6 @@ _selector: TypeAlias = (
     str | Literal["this", "next", "previous", "body", "document", "window", "host"]
 )
 
-# todo: add support for :inherited
-
 
 class SafeString(str):
     def __html__(self) -> SafeString:
@@ -22,52 +20,52 @@ class SafeString(str):
         return self
 
 
-def get(url: str) -> dict[str, str]:
+def get(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues GET request to specified URL.
 
     https://four.htmx.org/reference/attributes/hx-get
     """
-    return {"hx-get": url}
+    return {f"hx-get{':inherited' if inherited else ''}": url}
 
 
-def post(url: str) -> dict[str, str]:
+def post(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues POST request to specified URL.
 
     https://four.htmx.org/reference/attributes/hx-post
     """
-    return {"hx-post": url}
+    return {f"hx-post{':inherited' if inherited else ''}": url}
 
 
-def put(url: str) -> dict[str, str]:
+def put(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues PUT request to specified URL.
 
     https://four.htmx.org/reference/attributes/hx-put
     """
-    return {"hx-put": url}
+    return {f"hx-put{':inherited' if inherited else ''}": url}
 
 
-def patch(url: str) -> dict[str, str]:
+def patch(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues PATCH request to specified URL.
 
     https://four.htmx.org/reference/attributes/hx-patch
     """
-    return {"hx-patch": url}
+    return {f"hx-patch{':inherited' if inherited else ''}": url}
 
 
-def delete(url: str) -> dict[str, str]:
+def delete(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues DELETE request to specified URL.
 
     https://four.htmx.org/reference/attributes/hx-delete
     """
-    return {"hx-delete": url}
+    return {f"hx-delete{':inherited' if inherited else ''}": url}
 
 
-def trigger(*event: str) -> dict[str, str]:
+def trigger(*event: str, inherited: bool = False) -> dict[str, str]:
     """Controls when element issues requests.
 
     https://four.htmx.org/reference/attributes/hx-trigger
     """
-    return {"hx-trigger": ", ".join(event)}
+    return {f"hx-trigger{':inherited' if inherited else ''}": ", ".join(event)}
 
 
 _swap_style: TypeAlias = Literal[
@@ -106,6 +104,7 @@ def swap(
     target: str = "",
     strip: bool | None = None,
     swapEmpty: bool | None = None,
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Controls how response is inserted.
 
@@ -136,60 +135,60 @@ def swap(
         text += f" strip:{str(strip).lower()}"
     if swapEmpty is not None:
         text += f" swapEmpty:{str(swapEmpty).lower()}"
-    return {"hx-swap": text}
+    return {f"hx-swap{':inherited' if inherited else ''}": text}
 
 
-def morph_skip() -> dict[str, bool]:
+def morph_skip(*, inherited: bool = False) -> dict[str, bool]:
     """Skip morphing with attributes and children"""
-    return {"hx-morph-skip": True}
+    return {f"hx-morph-skip{':inherited' if inherited else ''}": True}
 
 
-def morph_skip_children() -> dict[str, bool]:
+def morph_skip_children(*, inherited: bool = False) -> dict[str, bool]:
     """Skip morphing with children only; attributes still morph"""
-    return {"hx-morph-skip-children": True}
+    return {f"hx-morph-skip-children{':inherited' if inherited else ''}": True}
 
 
-def target(selector: _selector) -> dict[str, str]:
+def target(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     """Controls where response is inserted.
 
     https://four.htmx.org/reference/attributes/hx-target
     """
-    return {"hx-target": selector}
+    return {f"hx-target{':inherited' if inherited else ''}": selector}
 
 
-def targets(*selector: _selector) -> dict[str, str]:
+def targets(*selector: _selector, inherited: bool = False) -> dict[str, str]:
     """Target many elements.
 
     Requires the hx-targets extension
     https://four.htmx.org/extensions/hx-targets
     """
-    return {"hx-targets": ", ".join(selector)}
+    return {f"hx-targets{':inherited' if inherited else ''}": ", ".join(selector)}
 
 
-def select(selector: _selector) -> dict[str, str]:
+def select(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     """Controls which response part is inserted.
 
     https://four.htmx.org/reference/attributes/hx-select
     """
-    return {"hx-select": selector}
+    return {f"hx-select{':inherited' if inherited else ''}": selector}
 
 
 @overload
-def on(event: str, js: str) -> dict[str, str]:
+def on(event: str, js: str, *, inherited: bool = False) -> dict[str, str]:
     pass
 
 
 @overload
-def on(*, js: str) -> dict[str, str]:
+def on(*, js: str, inherited: bool = False) -> dict[str, str]:
     pass
 
 
-def on(event: str = "", js: str = "") -> dict[str, str]:
+def on(event: str = "", js: str = "", *, inherited: bool = False) -> dict[str, str]:
     """Runs inline JavaScript when event fires.
 
     https://four.htmx.org/reference/attributes/hx-on
     """
-    return {f"hx-on{':' + event if event else ''}": SafeString(js)}
+    return {f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": SafeString(js)}
 
 
 class JS:
@@ -218,24 +217,24 @@ class _HTMXJSONEncoder(json.JSONEncoder):
         return string
 
 
-def vals(data: dict[str, Any], *, js: bool = False, append: bool = False) -> dict[str, str]:
+def vals(data: dict[str, Any], *, js: bool = False, append: bool = False, inherited: bool = False) -> dict[str, str]:
     """Adds values to request parameters.
 
     https://four.htmx.org/reference/attributes/hx-vals
     """
     data_string = json.dumps(data, cls=_HTMXJSONEncoder)
-    return {f"hx-vals{':append' if append else ''}": f"{'js:' if js else ''}{data_string}"}
+    return {f"hx-vals{':append' if append else ''}{':inherited' if inherited else ''}": f"{'js:' if js else ''}{data_string}"}
 
 
-def include(selector: _selector, *, append: bool = False) -> dict[str, str]:
+def include(selector: _selector, *, append: bool = False, inherited: bool = False) -> dict[str, str]:
     """Includes additional element values in request.
 
     https://four.htmx.org/reference/attributes/hx-include
     """
-    return {f"hx-include{':append' if append else ''}": selector}
+    return {f"hx-include{':append' if append else ''}{':inherited' if inherited else ''}": selector}
 
 
-def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "") -> dict[str, str]:
+def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "", *, inherited: bool = False) -> dict[str, str]:
     """Marks response elements to swap into page by ID.
 
     https://four.htmx.org/reference/attributes/hx-swap-oob
@@ -244,67 +243,69 @@ def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "") ->
         style: str = str(swap_style).lower()
     else:
         style = str(swap_style)
-    return {"hx-swap-oob": f"{style}{':' + selector if selector else ''}"}
+    return {f"hx-swap-oob{':inherited' if inherited else ''}": f"{style}{':' + selector if selector else ''}"}
 
 
-def select_oob(*selector: str) -> dict[str, str]:
+def select_oob(*selector: str, inherited: bool = False) -> dict[str, str]:
     """Picks response elements to swap into page by ID.
 
     https://four.htmx.org/reference/attributes/hx-select-oob
     """
-    return {"hx-select-oob": ", ".join(selector)}
+    return {f"hx-select-oob{':inherited' if inherited else ''}": ", ".join(selector)}
 
 
-def push_url(push: bool = True) -> dict[str, str]:
+def push_url(push: bool = True, *, inherited: bool = False) -> dict[str, str]:
     """Pushes URL into browser history.
 
     https://four.htmx.org/reference/attributes/hx-push-url
     """
-    return {"hx-push-url": str(push).lower()}
+    return {f"hx-push-url{':inherited' if inherited else ''}": str(push).lower()}
 
 
-def replace_url(replace: bool = True) -> dict[str, str]:
+def replace_url(replace: bool = True, *, inherited: bool = False) -> dict[str, str]:
     """Replaces current URL in browser history.
 
     https://four.htmx.org/reference/attributes/hx-replace-url
     """
-    return {"hx-replace-url": str(replace).lower()}
+    return {f"hx-replace-url{':inherited' if inherited else ''}": str(replace).lower()}
 
 
-def headers(data: dict[str, Any], *, js: bool = False) -> dict[str, str]:
+def headers(data: dict[str, Any], *, js: bool = False, inherited: bool = False) -> dict[str, str]:
     """Adds custom headers to request.
 
     https://four.htmx.org/reference/attributes/hx-headers
     """
-    return {"hx-headers": f"{'js:' if js else ''}{json.dumps(data, cls=_HTMXJSONEncoder)}"}
+    return {f"hx-headers{':inherited' if inherited else ''}": f"{'js:' if js else ''}{json.dumps(data, cls=_HTMXJSONEncoder)}"}
 
 
 def encoding(
     encoding_string: str | Literal["application/x-www-form-urlencoded", "multipart/form-data"],
+    *, inherited: bool = False,
 ) -> dict[str, str]:
     """Sets request encoding type.
 
     https://four.htmx.org/reference/attributes/hx-encoding
     """
-    return {"hx-encoding": encoding_string}
+    return {f"hx-encoding{':inherited' if inherited else ''}": encoding_string}
 
 
-def indicator(selector: _selector, append: bool = False) -> dict[str, str]:
+def indicator(selector: _selector, *, append: bool = False, inherited: bool = False) -> dict[str, str]:
     """Specifies loading indicator element.
 
     https://four.htmx.org/reference/attributes/hx-indicator
     """
-    return {f"hx-indicator{':append' if append else ''}": selector}
+    return {f"hx-indicator{':append' if append else ''}{':inherited' if inherited else ''}": selector}
 
 
 @overload
-def boost(boost: bool) -> dict[str, str]:
+def boost(boost: bool, *, inherited: bool = False) -> dict[str, str]:
     pass
 
 
 @overload
 def boost(
-    *, swap: _swap_style | str = "", target: _selector = "", select: _selector = ""
+    *, swap: _swap_style | str = "", target: _selector = "", select: _selector = "",
+    inherited: bool = False
 ) -> dict[str, str]:
     pass
 
@@ -315,6 +316,7 @@ def boost(
     swap: _swap_style | str = "",
     target: _selector = "",
     select: _selector = "",
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Converts links and forms to AJAX.
 
@@ -330,42 +332,43 @@ def boost(
             text += f" target:{target}"
         if select:
             text += f" select:{select}"
-    return {"hx-boost": text}
+    return {f"hx-boost{':inherited' if inherited else ''}": text}
 
 
 def sync(
     selector: _selector,
     strategy: Literal["drop", "abort", "replace", "queue first", "queue last", "queue all"],
+    *, inherited: bool = False
 ) -> dict[str, str]:
     """Synchronizes requests between elements.
 
     https://four.htmx.org/reference/attributes/hx-sync
     """
-    return {"hx-sync": f"{selector}:{strategy}"}
+    return {f"hx-sync{':inherited' if inherited else ''}": f"{selector}:{strategy}"}
 
 
-def confirm(confirmation_prompt: str) -> dict[str, str]:
+def confirm(confirmation_prompt: str, *, inherited: bool = False) -> dict[str, str]:
     """Shows confirmation dialog before request.
 
     https://four.htmx.org/reference/attributes/hx-confirm
     """
-    return {"hx-confirm": confirmation_prompt}
+    return {f"hx-confirm{':inherited' if inherited else ''}": confirmation_prompt}
 
 
-def validate(validate: bool = True) -> dict[str, str]:
+def validate(validate: bool = True, *, inherited: bool = False) -> dict[str, str]:
     """Validates before submitting request.
 
     https://four.htmx.org/reference/attributes/hx-validate
     """
-    return {"hx-validate": str(validate).lower()}
+    return {f"hx-validate{':inherited' if inherited else ''}": str(validate).lower()}
 
 
-def disable(selector: _selector) -> dict[str, str]:
+def disable(*selector: _selector, merge: bool = False, inherited: bool = False) -> dict[str, str]:
     """Disables elements during request.
 
     https://four.htmx.org/reference/attributes/hx-disable
     """
-    return {"hx-disable": selector}
+    return {f"hx-disable{':merge' if merge else ''}{':inherited' if inherited else ''}": ", ".join(selector)}
 
 
 def ignore() -> dict[str, str]:
@@ -376,26 +379,27 @@ def ignore() -> dict[str, str]:
     return {"hx-ignore": ""}
 
 
-def preserve() -> dict[str, str]:
+def preserve(*, inherited: bool = False) -> dict[str, str]:
     """Preserves element during swaps.
 
     https://four.htmx.org/reference/attributes/hx-preserve
     """
-    return {"hx-preserve": "true"}
+    return {f"hx-preserve{':inherited' if inherited else ''}": "true"}
 
 
 def preload(
     event: Literal["mouseenter", "mouseover", "touchstart"],
+    *, inherited: bool = False
 ) -> dict[str, str]:
     """Preloads content before user triggers request.
 
     Note: This is an extension attribute. To use it, you must include the preload extension.
     https://four.htmx.org/reference/attributes/hx-preload
     """
-    return {"hx-preload": event}
+    return {f"hx-preload{':inherited' if inherited else ''}": event}
 
 
-def optimistic(selector: _selector) -> dict[str, str]:
+def optimistic(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     """Shows optimistic content during request.
 
     Note: This is an extension attribute. To use it, you must include the optimistic extension.
@@ -413,6 +417,7 @@ def status(
     push: bool | str = "",
     replace: bool | str = "",
     transition: bool | None = None,
+    inherited: bool = False
 ) -> dict[str, str]:
     """Handles responses differently by status code.
 
@@ -431,25 +436,26 @@ def status(
         text += f" replace:{replace}"
     if transition is not None:
         text += f" transition:{transition}"
-    return {f"hx-status:{status_code}": text}
+    return {f"hx-status:{status_code}{':inherited' if inherited else ''}": text}
 
 
-def action(url: str) -> dict[str, str]:
+def action(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Specifies URL to receive request.
 
     https://four.htmx.org/reference/attributes/hx-action
     """
-    return {"hx-action": url}
+    return {f"hx-action{':inherited' if inherited else ''}": url}
 
 
 def method(
     text: Literal["get", "post", "put", "patch", "delete"],
+    *, inherited: bool = False
 ) -> dict[str, str]:
     """Specifies HTTP method for request.
 
     https://four.htmx.org/reference/attributes/hx-method
     """
-    return {"hx-method": text}
+    return {f"hx-method{':inherited' if inherited else ''}": text}
 
 
 def config(
@@ -462,6 +468,7 @@ def config(
     integrity: str = "",
     validate: bool | None = None,
     append: bool = False,
+    inherited: bool = False
 ) -> dict[str, str]:
     """Configures request behavior.
 
@@ -482,7 +489,7 @@ def config(
         data["integrity"] = integrity
     if validate is not None:
         data["validate"] = validate
-    return {f"hx-config{':append' if append else ''}": json.dumps(data)}
+    return {f"hx-config{':append' if append else ''}{':inherited' if inherited else ''}": json.dumps(data)}
 
 
 def history_elt() -> dict[str, str]:
