@@ -188,7 +188,9 @@ def on(event: str = "", js: str = "", *, inherited: bool = False) -> dict[str, s
 
     https://four.htmx.org/reference/attributes/hx-on
     """
-    return {f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": SafeString(js)}
+    return {
+        f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": SafeString(js)
+    }
 
 
 class JS:
@@ -200,14 +202,17 @@ class JS:
     def __init__(self, value: str) -> None:
         self.value = value
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{JS.start}{self.value}{JS.end}"
+
+    def __str__(self) -> str:
+        return f"JS({self.value})"
 
 
 class _HTMXJSONEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
         if isinstance(o, JS):
-            return str(o)
+            return repr(o)
             # Let the base class default method raise the TypeError
         return super().default(o)
 
@@ -217,16 +222,22 @@ class _HTMXJSONEncoder(json.JSONEncoder):
         return string
 
 
-def vals(data: dict[str, Any], *, js: bool = False, append: bool = False, inherited: bool = False) -> dict[str, str]:
+def vals(
+    data: dict[str, Any], *, js: bool = False, append: bool = False, inherited: bool = False
+) -> dict[str, str]:
     """Adds values to request parameters.
 
     https://four.htmx.org/reference/attributes/hx-vals
     """
     data_string = json.dumps(data, cls=_HTMXJSONEncoder)
-    return {f"hx-vals{':append' if append else ''}{':inherited' if inherited else ''}": f"{'js:' if js else ''}{data_string}"}
+    return {
+        f"hx-vals{':append' if append else ''}{':inherited' if inherited else ''}": f"{'js:' if js else ''}{data_string}"
+    }
 
 
-def include(selector: _selector, *, append: bool = False, inherited: bool = False) -> dict[str, str]:
+def include(
+    selector: _selector, *, append: bool = False, inherited: bool = False
+) -> dict[str, str]:
     """Includes additional element values in request.
 
     https://four.htmx.org/reference/attributes/hx-include
@@ -234,7 +245,9 @@ def include(selector: _selector, *, append: bool = False, inherited: bool = Fals
     return {f"hx-include{':append' if append else ''}{':inherited' if inherited else ''}": selector}
 
 
-def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "", *, inherited: bool = False) -> dict[str, str]:
+def swap_oob(
+    swap_style: _swap_style | bool = True, selector: _selector = "", *, inherited: bool = False
+) -> dict[str, str]:
     """Marks response elements to swap into page by ID.
 
     https://four.htmx.org/reference/attributes/hx-swap-oob
@@ -243,7 +256,9 @@ def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "", *,
         style: str = str(swap_style).lower()
     else:
         style = str(swap_style)
-    return {f"hx-swap-oob{':inherited' if inherited else ''}": f"{style}{':' + selector if selector else ''}"}
+    return {
+        f"hx-swap-oob{':inherited' if inherited else ''}": f"{style}{':' + selector if selector else ''}"
+    }
 
 
 def select_oob(*selector: str, inherited: bool = False) -> dict[str, str]:
@@ -275,12 +290,15 @@ def headers(data: dict[str, Any], *, js: bool = False, inherited: bool = False) 
 
     https://four.htmx.org/reference/attributes/hx-headers
     """
-    return {f"hx-headers{':inherited' if inherited else ''}": f"{'js:' if js else ''}{json.dumps(data, cls=_HTMXJSONEncoder)}"}
+    return {
+        f"hx-headers{':inherited' if inherited else ''}": f"{'js:' if js else ''}{json.dumps(data, cls=_HTMXJSONEncoder)}"
+    }
 
 
 def encoding(
     encoding_string: str | Literal["application/x-www-form-urlencoded", "multipart/form-data"],
-    *, inherited: bool = False,
+    *,
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Sets request encoding type.
 
@@ -289,12 +307,16 @@ def encoding(
     return {f"hx-encoding{':inherited' if inherited else ''}": encoding_string}
 
 
-def indicator(selector: _selector, *, append: bool = False, inherited: bool = False) -> dict[str, str]:
+def indicator(
+    selector: _selector, *, append: bool = False, inherited: bool = False
+) -> dict[str, str]:
     """Specifies loading indicator element.
 
     https://four.htmx.org/reference/attributes/hx-indicator
     """
-    return {f"hx-indicator{':append' if append else ''}{':inherited' if inherited else ''}": selector}
+    return {
+        f"hx-indicator{':append' if append else ''}{':inherited' if inherited else ''}": selector
+    }
 
 
 @overload
@@ -304,8 +326,11 @@ def boost(boost: bool, *, inherited: bool = False) -> dict[str, str]:
 
 @overload
 def boost(
-    *, swap: _swap_style | str = "", target: _selector = "", select: _selector = "",
-    inherited: bool = False
+    *,
+    swap: _swap_style | str = "",
+    target: _selector = "",
+    select: _selector = "",
+    inherited: bool = False,
 ) -> dict[str, str]:
     pass
 
@@ -338,7 +363,8 @@ def boost(
 def sync(
     selector: _selector,
     strategy: Literal["drop", "abort", "replace", "queue first", "queue last", "queue all"],
-    *, inherited: bool = False
+    *,
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Synchronizes requests between elements.
 
@@ -368,15 +394,19 @@ def disable(*selector: _selector, merge: bool = False, inherited: bool = False) 
 
     https://four.htmx.org/reference/attributes/hx-disable
     """
-    return {f"hx-disable{':merge' if merge else ''}{':inherited' if inherited else ''}": ", ".join(selector)}
+    return {
+        f"hx-disable{':merge' if merge else ''}{':inherited' if inherited else ''}": ", ".join(
+            selector
+        )
+    }
 
 
-def ignore() -> dict[str, str]:
+def ignore(*, inherited: bool = False) -> dict[str, str]:
     """Disables htmx processing for element.
 
     https://four.htmx.org/reference/attributes/hx-ignore
     """
-    return {"hx-ignore": ""}
+    return {f"hx-ignore{':inherited' if inherited else ''}": ""}
 
 
 def preserve(*, inherited: bool = False) -> dict[str, str]:
@@ -388,8 +418,7 @@ def preserve(*, inherited: bool = False) -> dict[str, str]:
 
 
 def preload(
-    event: Literal["mouseenter", "mouseover", "touchstart"],
-    *, inherited: bool = False
+    event: Literal["mouseenter", "mouseover", "touchstart"], *, inherited: bool = False
 ) -> dict[str, str]:
     """Preloads content before user triggers request.
 
@@ -405,7 +434,7 @@ def optimistic(selector: _selector, *, inherited: bool = False) -> dict[str, str
     Note: This is an extension attribute. To use it, you must include the optimistic extension.
     https://four.htmx.org/reference/attributes/hx-optimistic
     """
-    return {"hx-optimistic": selector}
+    return {f"hx-optimistic{':inherited' if inherited else ''}": selector}
 
 
 def status(
@@ -417,7 +446,7 @@ def status(
     push: bool | str = "",
     replace: bool | str = "",
     transition: bool | None = None,
-    inherited: bool = False
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Handles responses differently by status code.
 
@@ -448,8 +477,7 @@ def action(url: str, *, inherited: bool = False) -> dict[str, str]:
 
 
 def method(
-    text: Literal["get", "post", "put", "patch", "delete"],
-    *, inherited: bool = False
+    text: Literal["get", "post", "put", "patch", "delete"], *, inherited: bool = False
 ) -> dict[str, str]:
     """Specifies HTTP method for request.
 
@@ -468,7 +496,7 @@ def config(
     integrity: str = "",
     validate: bool | None = None,
     append: bool = False,
-    inherited: bool = False
+    inherited: bool = False,
 ) -> dict[str, str]:
     """Configures request behavior.
 
@@ -489,12 +517,16 @@ def config(
         data["integrity"] = integrity
     if validate is not None:
         data["validate"] = validate
-    return {f"hx-config{':append' if append else ''}{':inherited' if inherited else ''}": json.dumps(data)}
+    return {
+        f"hx-config{':append' if append else ''}{':inherited' if inherited else ''}": json.dumps(
+            data
+        )
+    }
 
 
-def history_elt() -> dict[str, str]:
+def history_elt(*, inherited: bool = False) -> dict[str, str]:
     """Marks element to swap on history restore.
 
     https://four.htmx.org/reference/attributes/hx-history-elt
     """
-    return {"hx-history-elt": ""}
+    return {f"hx-history-elt{':inherited' if inherited else ''}": ""}
