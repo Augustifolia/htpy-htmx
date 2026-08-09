@@ -158,10 +158,7 @@ def test_boost() -> None:
 
 def test_boost_long_form() -> None:
     a = h.div("#div1", hx.boost(swap="outerSync", select="#main", target="#main"))
-    assert (
-        str(a)
-        == '<div id="div1" hx-boost="swap:outerSync target:#main select:#main"></div>'
-    )
+    assert str(a) == '<div id="div1" hx-boost="swap:outerSync target:#main select:#main"></div>'
 
 
 def test_sync() -> None:

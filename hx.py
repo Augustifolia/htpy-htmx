@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 from typing import Literal, TypeAlias, Any, overload
 
@@ -191,22 +192,18 @@ def on(event: str = "", js: str = "") -> dict[str, str]:
 
     https://four.htmx.org/reference/attributes/hx-on
     """
-    return {f"hx-on{":" + event if event else ""}": SafeString(js)}
+    return {f"hx-on{':' + event if event else ''}": SafeString(js)}
 
 
 # todo: figure out how to handle js attributes in data.
 #  Currently they have "" around them that needs to be removed somehow
-def vals(
-    data: dict[str, Any], js: bool = False, append: bool = False
-) -> dict[str, str]:
+def vals(data: dict[str, Any], js: bool = False, append: bool = False) -> dict[str, str]:
     """Adds values to request parameters.
 
     https://four.htmx.org/reference/attributes/hx-vals
     """
     data_string = json.dumps(data)
-    return {
-        f"hx-vals{":append" if append else ""}": f"{"js:" if js else ""}{data_string}"
-    }
+    return {f"hx-vals{':append' if append else ''}": f"{'js:' if js else ''}{data_string}"}
 
 
 def include(selector: _selector, append: bool = False) -> dict[str, str]:
@@ -214,12 +211,10 @@ def include(selector: _selector, append: bool = False) -> dict[str, str]:
 
     https://four.htmx.org/reference/attributes/hx-include
     """
-    return {f"hx-include{":append" if append else ""}": selector}
+    return {f"hx-include{':append' if append else ''}": selector}
 
 
-def swap_oob(
-    swap_style: _swap_style | bool = True, selector: _selector = ""
-) -> dict[str, str]:
+def swap_oob(swap_style: _swap_style | bool = True, selector: _selector = "") -> dict[str, str]:
     """Marks response elements to swap into page by ID.
 
     https://four.htmx.org/reference/attributes/hx-swap-oob
@@ -228,7 +223,7 @@ def swap_oob(
         style: str = str(swap_style).lower()
     else:
         style = str(swap_style)
-    return {"hx-swap-oob": f"{style}{":" + selector if selector else ""}"}
+    return {"hx-swap-oob": f"{style}{':' + selector if selector else ''}"}
 
 
 def select_oob(*selector: str) -> dict[str, str]:
@@ -261,13 +256,11 @@ def headers(data: dict[str, Any], js: bool = False) -> dict[str, str]:
 
     https://four.htmx.org/reference/attributes/hx-headers
     """
-    return {"hx-headers": f"{"js:" if js else ""}{json.dumps(data)}"}
+    return {"hx-headers": f"{'js:' if js else ''}{json.dumps(data)}"}
 
 
 def encoding(
-    encoding_string: (
-        str | Literal["application/x-www-form-urlencoded", "multipart/form-data"]
-    ),
+    encoding_string: str | Literal["application/x-www-form-urlencoded", "multipart/form-data"],
 ) -> dict[str, str]:
     """Sets request encoding type.
 
@@ -281,7 +274,7 @@ def indicator(selector: _selector, append: bool = False) -> dict[str, str]:
 
     https://four.htmx.org/reference/attributes/hx-indicator
     """
-    return {f"hx-indicator{":append" if append else ""}": selector}
+    return {f"hx-indicator{':append' if append else ''}": selector}
 
 
 @overload
@@ -322,9 +315,7 @@ def boost(
 
 def sync(
     selector: _selector,
-    strategy: Literal[
-        "drop", "abort", "replace", "queue first", "queue last", "queue all"
-    ],
+    strategy: Literal["drop", "abort", "replace", "queue first", "queue last", "queue all"],
 ) -> dict[str, str]:
     """Synchronizes requests between elements.
 
@@ -449,7 +440,7 @@ def config(
         data["integrity"] = integrity
     if validate is not None:
         data["validate"] = validate
-    return {f"hx-config{":append" if append else ""}": json.dumps(data)}
+    return {f"hx-config{':append' if append else ''}": json.dumps(data)}
 
 
 def history_elt() -> dict[str, str]:
