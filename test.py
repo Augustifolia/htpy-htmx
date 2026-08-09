@@ -201,13 +201,14 @@ def test_optimistic() -> None:
     assert str(a) == '<div id="div1" hx-optimistic="#liked-state"></div>'
 
 
+# todo: test all attributes to hx-status
 def test_status() -> None:
-    a = h.div("#div1", hx.status(404, "swap:none"))
+    a = h.div("#div1", hx.status(404, swap="none"))
     assert str(a) == '<div id="div1" hx-status:404="swap:none"></div>'
 
 
 def test_status_string() -> None:
-    a = h.div("#div1", hx.status("5xx", "swap:none"))
+    a = h.div("#div1", hx.status("5xx", swap="none"))
     assert str(a) == '<div id="div1" hx-status:5xx="swap:none"></div>'
 
 

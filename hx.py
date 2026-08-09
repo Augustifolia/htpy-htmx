@@ -13,10 +13,6 @@ _selector: TypeAlias = (
 
 # todo: add support for :inherited
 
-# todo: decide what to do with stuff that requires extensions,
-# it would probably be reasonable to include include helpers for the included extensions in htmx.
-# another option would be to have all stuff related to extensions in a separate file.
-
 
 class SafeString(str):
     def __html__(self) -> SafeString:
@@ -97,6 +93,7 @@ _swap_style: TypeAlias = Literal[
 
 def swap(
     style: _swap_style,
+    *,
     transition: bool | None = None,
     swap: str = "",
     settle: str = "",
@@ -197,8 +194,10 @@ def on(event: str = "", js: str = "") -> dict[str, str]:
 
 class JS:
     """Used to mark strings as js expressions for use in hx-vals and hx-headers."""
-    start = 'HXJS-start:'
-    end = ':HXJS-end'
+
+    start = "HXJS-start:"
+    end = ":HXJS-end"
+
     def __init__(self, value: str) -> None:
         self.value = value
 
@@ -215,11 +214,11 @@ class _HTMXJSONEncoder(json.JSONEncoder):
 
     def encode(self, o: Any) -> str:
         string: str = super().encode(o)
-        string = string.replace(f'"{JS.start}',  "").replace(f'{JS.end}"', "")
+        string = string.replace(f'"{JS.start}', "").replace(f'{JS.end}"', "")
         return string
 
 
-def vals(data: dict[str, Any], js: bool = False, append: bool = False) -> dict[str, str]:
+def vals(data: dict[str, Any], *, js: bool = False, append: bool = False) -> dict[str, str]:
     """Adds values to request parameters.
 
     https://four.htmx.org/reference/attributes/hx-vals
@@ -228,7 +227,7 @@ def vals(data: dict[str, Any], js: bool = False, append: bool = False) -> dict[s
     return {f"hx-vals{':append' if append else ''}": f"{'js:' if js else ''}{data_string}"}
 
 
-def include(selector: _selector, append: bool = False) -> dict[str, str]:
+def include(selector: _selector, *, append: bool = False) -> dict[str, str]:
     """Includes additional element values in request.
 
     https://four.htmx.org/reference/attributes/hx-include
@@ -272,7 +271,7 @@ def replace_url(replace: bool = True) -> dict[str, str]:
     return {"hx-replace-url": str(replace).lower()}
 
 
-def headers(data: dict[str, Any], js: bool = False) -> dict[str, str]:
+def headers(data: dict[str, Any], *, js: bool = False) -> dict[str, str]:
     """Adds custom headers to request.
 
     https://four.htmx.org/reference/attributes/hx-headers
@@ -405,12 +404,33 @@ def optimistic(selector: _selector) -> dict[str, str]:
     return {"hx-optimistic": selector}
 
 
-# todo: update signature
-def status(status_code: str | int, text: str) -> dict[str, str]:
+def status(
+    status_code: str | int,
+    *,
+    swap: _swap_style | None = None,
+    target: _selector = "",
+    select: _selector = "",
+    push: bool | str = "",
+    replace: bool | str = "",
+    transition: bool | None = None,
+) -> dict[str, str]:
     """Handles responses differently by status code.
 
     https://four.htmx.org/reference/attributes/hx-status
     """
+    text: str = ""
+    if swap is not None:
+        text += f"swap:{swap}"
+    if target:
+        text += f" target:{target}"
+    if select:
+        text += f" select:{select}"
+    if push != "":
+        text += f" push:{push}"
+    if replace != "":
+        text += f" replace:{replace}"
+    if transition is not None:
+        text += f" transition:{transition}"
     return {f"hx-status:{status_code}": text}
 
 
@@ -433,6 +453,7 @@ def method(
 
 
 def config(
+    *,
     timeout: int | None = None,
     credentials: str = "",
     cache: str = "",
