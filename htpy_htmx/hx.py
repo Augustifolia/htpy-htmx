@@ -1,64 +1,10 @@
 from __future__ import annotations
 import json
-from typing import Literal, TypeAlias, Any, overload
-
+from typing import Literal, Any, overload
 from htpy import Element
+from ._types import _swap_style, _selector, _event, _htmx_events
 
 partial = Element("hx-partial")
-
-
-_selector: TypeAlias = (
-    str | Literal["this", "next", "previous", "body", "document", "window", "host"]
-)
-
-_event: TypeAlias = (
-    str
-    | Literal[
-        "load",
-        "revealed",
-        "intersect",
-        "submit",
-        "change",
-        "input",
-        "focus",
-        "blur",
-        "click",
-        "dblclick",
-        "mousedown",
-        "mouseup",
-        "mousemove",
-        "mouseenter",
-        "mouseleave",
-        "wheel",
-        "mousewheel",
-        "keyup",
-        "keydown",
-        "keypress",
-        "dragstart",
-        "drag",
-        "dragend",
-        "dragenter",
-        "dragover",
-        "dragleave",
-        "drop",
-        "play",
-        "pause",
-        "ended",
-        "volumechange",
-        "touchstart",
-        "touchend",
-        "touchmove",
-        "touchcancel",
-        "resize",
-        "scroll",
-        "select",
-        "search",
-        "invalid",
-        "contextmenu",
-        "reset",
-
-    ]
-)
 
 
 class SafeString(str):
@@ -115,27 +61,6 @@ def trigger(*event: _event, inherited: bool = False) -> dict[str, str]:
     https://four.htmx.org/reference/attributes/hx-trigger
     """
     return {f"hx-trigger{':inherited' if inherited else ''}": ", ".join(event)}
-
-
-_swap_style: TypeAlias = Literal[
-    "innerHTML",
-    "outerHTML",
-    "beforebegin",
-    "before",
-    "afterbegin",
-    "prepend",
-    "beforeend",
-    "append",
-    "afterend",
-    "after",
-    "delete",
-    "none",
-    "innerMorph",
-    "outerMorph",
-    "textContent",
-    "outerSync",
-    "upsert",  # Requires the hx-upsert extension.
-]
 
 
 def swap(
@@ -205,52 +130,12 @@ def target(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     return {f"hx-target{':inherited' if inherited else ''}": selector}
 
 
-def targets(*selector: _selector, inherited: bool = False) -> dict[str, str]:
-    """Target many elements.
-
-    Requires the hx-targets extension
-    https://four.htmx.org/extensions/hx-targets
-    """
-    return {f"hx-targets{':inherited' if inherited else ''}": ", ".join(selector)}
-
-
 def select(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     """Controls which response part is inserted.
 
     https://four.htmx.org/reference/attributes/hx-select
     """
     return {f"hx-select{':inherited' if inherited else ''}": selector}
-
-
-_htmx_events: TypeAlias = Literal[
-    "htmx:config:request",
-    "htmx:before:request",
-    "htmx:after:request",
-    "htmx:finally:request",
-    "htmx:before:swap",
-    "htmx:after:swap",
-    "htmx:finally:swap",
-    "htmx:before:cleanup",
-    "htmx:after:cleanup",
-    "htmx:confirm",
-    "htmx:error",
-    "htmx:abort",
-    "htmx:before:init",
-    "htmx:after:init",
-    "htmx:before:process",
-    "htmx:after:process",
-    "htmx:before:history:update",
-    "htmx:after:history:update",
-    "htmx:after:history:push",
-    "htmx:after:history:replace",
-    "htmx:before:history:restore",
-    "htmx:before:viewTransition",
-    "htmx:after:viewTransition",
-    "htmx:before:response",
-    "htmx:before:settle",
-    "htmx:after:settle",
-    "htmx:response:error",
-]
 
 
 @overload
@@ -497,26 +382,6 @@ def preserve(*, inherited: bool = False) -> dict[str, str]:
     https://four.htmx.org/reference/attributes/hx-preserve
     """
     return {f"hx-preserve{':inherited' if inherited else ''}": "true"}
-
-
-def preload(
-    event: Literal["mouseenter", "mouseover", "touchstart"], *, inherited: bool = False
-) -> dict[str, str]:
-    """Preloads content before user triggers request.
-
-    Note: This is an extension attribute. To use it, you must include the preload extension.
-    https://four.htmx.org/reference/attributes/hx-preload
-    """
-    return {f"hx-preload{':inherited' if inherited else ''}": event}
-
-
-def optimistic(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
-    """Shows optimistic content during request.
-
-    Note: This is an extension attribute. To use it, you must include the optimistic extension.
-    https://four.htmx.org/reference/attributes/hx-optimistic
-    """
-    return {f"hx-optimistic{':inherited' if inherited else ''}": selector}
 
 
 def status(

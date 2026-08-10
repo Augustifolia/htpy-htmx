@@ -29,3 +29,7 @@ include = '\.pyi?$'
 
 [tool.mypy]
 strict = true
+
+[tool.pytest.ini_options]
+python_files="tests/**.py"
+norecursedirs=".*"

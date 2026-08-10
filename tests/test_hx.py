@@ -1,4 +1,4 @@
-import hx
+from htpy_htmx import hx
 import htpy as h
 
 
@@ -56,11 +56,6 @@ def test_morph_skip_children() -> None:
 def test_target() -> None:
     a = h.div("#div1", hx.target("#div1"))
     assert str(a) == '<div id="div1" hx-target="#div1"></div>'
-
-
-def test_targets() -> None:
-    a = h.div("#div1", hx.targets("#div1", "#div2"))
-    assert str(a) == '<div id="div1" hx-targets="#div1, #div2"></div>'
 
 
 def test_select() -> None:
@@ -189,16 +184,6 @@ def test_ignore() -> None:
 def test_preserve() -> None:
     a = h.div("#div1", hx.preserve())
     assert str(a) == '<div id="div1" hx-preserve="true"></div>'
-
-
-def test_preload() -> None:
-    a = h.div("#div1", hx.preload("mouseenter"))
-    assert str(a) == '<div id="div1" hx-preload="mouseenter"></div>'
-
-
-def test_optimistic() -> None:
-    a = h.div("#div1", hx.optimistic("#liked-state"))
-    assert str(a) == '<div id="div1" hx-optimistic="#liked-state"></div>'
 
 
 # todo: test all attributes to hx-status

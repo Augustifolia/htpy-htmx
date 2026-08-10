@@ -8,12 +8,15 @@ Note: This project is still a work in progress and there may be breaking changes
 
 ## Usage
 
-You can import htpy-htmx as hx. All normal htmx attributes are available from the module, 
-but without the "hx-" prefix. So `hx-get="url"` would become `hx.get("url")`
+You can import htpy-htmx as htpy_htmx.hx. All normal htmx attributes are available from the module,
+but without the "hx-" prefix. So `hx-get="url"` would become `hx.get("url")`.
+
+Some htmx extension attributes are available in the htpy_htmx.ext module.
 
 ```python
 import htpy as h
-import hx
+from htpy_htmx import hx
+from htpy_htmx import ext
 
 # pass htmx attributes as functions
 h.div("#div-id", hx.get("/some-url/"), hx.trigger("click"))
@@ -45,6 +48,13 @@ h.div(hx.confirm("Are you sure?", inherited=True))[
     h.button(hx.delete("/account"))["Delete My Account"],
     h.button(hx.put("/account"))["Update My Account"],
 ]
+
+# Some extension attributes are available in ext:
+h.div(
+    ext.preload("touchstart"),
+    ext.optimistic("#msg-opt"),
+    ext.ws(connect="click"),
+)
 ```
 
 ## Installation
