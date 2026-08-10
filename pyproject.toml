@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = [ { name = "August Malmdahl" } ]
 description = "Helpers for using htmx in htpy"
 requires-python = ">=3.10"
+readme = "README.md"
 dependencies = [
     "htpy",
 ]
@@ -12,7 +13,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Typing :: Typed",
 ]
+
 
 [dependency-groups]
 dev = [
@@ -27,9 +31,17 @@ line-length = 100
 target-version = ['py310']
 include = '\.pyi?$'
 
+
 [tool.mypy]
 strict = true
+
 
 [tool.pytest.ini_options]
 python_files="tests/**.py"
 norecursedirs=".*"
+
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+packages = ["htpy_htmx"]
