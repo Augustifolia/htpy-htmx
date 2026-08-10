@@ -138,16 +138,6 @@ def select(selector: _selector, *, inherited: bool = False) -> dict[str, str]:
     return {f"hx-select{':inherited' if inherited else ''}": selector}
 
 
-@overload
-def on(event: _event | _htmx_events, js: str, *, inherited: bool = False) -> dict[str, str]:
-    pass
-
-
-@overload
-def on(*, js: str, inherited: bool = False) -> dict[str, str]:
-    pass
-
-
 def on(
     event: _event | _htmx_events = "", js: str = "", *, inherited: bool = False
 ) -> dict[str, str]:
@@ -314,16 +304,15 @@ def boost(
 
     https://four.htmx.org/reference/attributes/hx-boost
     """
-    if boost is not None:
+    text = ""
+    if swap:
+        text += f"swap:{swap}"
+    if target:
+        text += f" target:{target}"
+    if select:
+        text += f" select:{select}"
+    if boost is not None and text == "":
         text = str(boost).lower()
-    else:
-        text = ""
-        if swap:
-            text += f"swap:{swap}"
-        if target:
-            text += f" target:{target}"
-        if select:
-            text += f" select:{select}"
     return {f"hx-boost{':inherited' if inherited else ''}": text}
 
 
