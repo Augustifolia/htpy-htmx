@@ -61,4 +61,4 @@ h.div(
 
 Currently not available on PyPi, but it can be installed directly from GitHub:
 
-    pip install git+https://github.com/augustifolia/htpy-htmx.git
+    pip install git+ssh://git@github.com/Augustifolia/htpy-htmx.git
