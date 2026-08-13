@@ -1,0 +1,20 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/psf/black
+    rev: 26.5.1
+    hooks:
+    -   id: black
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.3.0
+    hooks:
+    -   id: mypy
+-   repo: local
+    hooks:
+    -   id: pytest
+        name: pytest
+        entry: ./.venv/bin/pytest
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
