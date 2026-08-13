@@ -137,9 +137,7 @@ def on(
 
     https://four.htmx.org/reference/attributes/hx-on
     """
-    return {
-        f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": js
-    }
+    return {f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": js}
 
 
 class JS:
