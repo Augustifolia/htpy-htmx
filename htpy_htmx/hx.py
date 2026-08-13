@@ -7,14 +7,6 @@ from ._types import _swap_style, _selector, _event, _htmx_events
 partial = Element("hx-partial")
 
 
-class SafeString(str):
-    def __html__(self) -> SafeString:
-        return self
-
-    def __str__(self) -> SafeString:
-        return self
-
-
 def get(url: str, *, inherited: bool = False) -> dict[str, str]:
     """Issues GET request to specified URL.
 
@@ -146,7 +138,7 @@ def on(
     https://four.htmx.org/reference/attributes/hx-on
     """
     return {
-        f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": SafeString(js)
+        f"hx-on{':' + event if event else ''}{':inherited' if inherited else ''}": js
     }
 
 

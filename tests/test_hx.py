@@ -70,7 +70,7 @@ def test_on() -> None:
 
 def test_on_extended_syntax() -> None:
     a = h.div("#div1", hx.on(js="load -> this.showModal()"))
-    assert str(a) == '<div id="div1" hx-on="load -> this.showModal()"></div>'
+    assert str(a) == '<div id="div1" hx-on="load -&gt; this.showModal()"></div>'
 
 
 def test_vals() -> None:
