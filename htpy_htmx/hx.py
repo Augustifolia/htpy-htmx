@@ -47,6 +47,57 @@ def delete(url: str, *, inherited: bool = False) -> dict[str, str]:
     return {f"hx-delete{':inherited' if inherited else ''}": url}
 
 
+def trigger_event(
+    event: _event,
+    filter: str = "",
+    once: bool = False,
+    changed: bool = False,
+    delay: str = "",
+    throttle: str = "",
+    from_: _selector = "",
+    target: _selector = "",
+    prevent: bool = False,
+    stop: bool = False,
+    consume: bool = False,
+    halt: bool = False,
+    capture: bool = False,
+    passive: bool = False,
+) -> str:
+    """Helper function to generate event syntax for hx-trigger.
+
+    Usage:
+        hx.trigger(hx.trigger_event("keyup", filter="key==Enter"), "click")
+    """
+    text: str = event
+    if filter:
+        text += f"[{filter}]"
+    if once:
+        text += " once"
+    if changed:
+        text += " changed"
+    if delay:
+        text += f" delay:{delay}"
+    if throttle:
+        text += f" throttle:{throttle}"
+    if from_:
+        text += f" from:{from_}"
+    if target:
+        text += f" target:{target}"
+    if prevent:
+        text += " prevent"
+    if stop:
+        text += " stop"
+    if consume:
+        text += " consume"
+    if halt:
+        text += " halt"
+    if capture:
+        text += " capture"
+    if passive:
+        text += " passive"
+    return text
+
+
 def trigger(*event: _event, inherited: bool = False) -> dict[str, str]:
     """Controls when element issues requests.
 

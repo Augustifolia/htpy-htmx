@@ -37,6 +37,14 @@ def test_trigger() -> None:
     assert str(a) == '<div id="div1" hx-trigger="click"></div>'
 
 
+def test_trigger_helper() -> None:
+    a = hx.trigger(
+        hx.trigger_event("keyup", filter="key==Enter", once=True, delay="300ms"),
+        hx.trigger_event("click"),
+    )
+    assert a == {"hx-trigger": "keyup[key==Enter] once delay:300ms, click"}
+
+
 # todo: test all attributes to hx-swap
 def test_swap() -> None:
     a = h.div("#div1", hx.swap("innerHTML"))
